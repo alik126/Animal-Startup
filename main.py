@@ -1,4 +1,4 @@
-from app import client, transformer, batcher
+from app import client, transformer, batcher, parallel
 
 def run():
     animals = client.fetch_animals()
@@ -15,10 +15,7 @@ def run():
     batches = batcher.split_batches(transformed_animals, 100)
     print(f"Posting {len(batches)} batches...")
 
-    for idx in range(len(batches)):
-        success = client.post_animals_batch(batches[idx])
-        if success:
-            print(f"Posted batch {idx + 1}")
+    parallel.post_all_batches(batches)
 
 if __name__ == "__main__":
     run()
