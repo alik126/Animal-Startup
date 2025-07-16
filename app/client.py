@@ -18,10 +18,14 @@ def fetch_animals() -> List[dict]:
             try:
                 response = requests.get(url, timeout=TIMEOUT)
                 if response.status_code in {500, 502, 503, 504}:
-                    raise requests.RequestException(f"Server error {response.status_code}")
+                    raise requests.RequestException(
+                        f"Server error {response.status_code}"
+                    )
                 break
             except requests.RequestException as e:
-                print(f"[Retry {attempt + 1}/{MAX_RETRIES}] Failed to fetch page {page}: {e}")
+                print(
+                    f"[Retry {attempt + 1}/{MAX_RETRIES}] Failed to fetch page {page}: {e}"
+                )
                 sleep(2)
 
         else:
