@@ -1,6 +1,6 @@
 import requests, time
 from time import sleep
-from typing import List
+from typing import List, Dict
 from app.config import BASE_URL, FETCH_ENDPOINT, POST_ENDPOINT, MAX_RETRIES, TIMEOUT
 
 
@@ -43,7 +43,7 @@ def fetch_animals() -> List[dict]:
     return all_animals
 
 
-def post_animals_batch(batch):
+def post_animals_batch(batch: List[Dict]) -> bool:
     url = f"{BASE_URL}{POST_ENDPOINT}"
 
     for attempt in range(MAX_RETRIES):

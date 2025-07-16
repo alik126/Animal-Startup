@@ -1,6 +1,7 @@
+from typing import Optional, List
 from datetime import datetime, timezone
 
-def transform_friends(friends):
+def transform_friends(friends: Optional[str]) -> List[str]:
     if not friends:
         return []
 
@@ -12,7 +13,7 @@ def transform_friends(friends):
 
     return result
 
-def transform_born_at(born_at):
+def transform_born_at(born_at: Optional[int]) -> Optional[str]:
     if not born_at:
         return None
 
