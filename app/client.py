@@ -37,8 +37,9 @@ def fetch_animals() -> List[dict]:
                 sleep(2)
 
         else:
-            raise Exception(f"Failed to fetch page {page} "
-                            f"after {MAX_RETRIES} retries.")
+            raise Exception(
+                f"Failed to fetch page {page} " f"after {MAX_RETRIES} retries."
+            )
 
         data = response.json()
 
@@ -70,8 +71,7 @@ def post_animals_batch(batch: List[Dict]) -> bool:
             return True
 
         except Exception as e:
-            print(f"[Retry {attempt + 1}/{MAX_RETRIES}] "
-                  f"Failed to post batch: {e}")
+            print(f"[Retry {attempt + 1}/{MAX_RETRIES}] " f"Failed to post batch: {e}")
             time.sleep(2)
 
     raise Exception(f"Failed to post batch after {MAX_RETRIES} attempts.")
