@@ -1,12 +1,19 @@
-import requests, time
+import time
+import requests
 from time import sleep
-from typing import List, Dict
-from app.config import BASE_URL, FETCH_ENDPOINT, POST_ENDPOINT, MAX_RETRIES, TIMEOUT
+from typing import List
+from typing import Dict
+from app.config import TIMEOUT
+from app.config import BASE_URL
+from app.config import MAX_RETRIES
+from app.config import FETCH_ENDPOINT
+from app.config import POST_ENDPOINT
 
 
 def fetch_animals() -> List[dict]:
     """
-    Fetch all animals using pagination with retry (upto 5 times) on server errors.
+    Fetch all animals using pagination with retry
+    (upto 5 times) on server errors.
     """
     all_animals = []
     page = 1
@@ -24,12 +31,14 @@ def fetch_animals() -> List[dict]:
                 break
             except requests.RequestException as e:
                 print(
-                    f"[Retry {attempt + 1}/{MAX_RETRIES}] Failed to fetch page {page}: {e}"
+                    f"[Retry {attempt + 1}/{MAX_RETRIES}] "
+                    f"Failed to fetch page {page}: {e}"
                 )
                 sleep(2)
 
         else:
-            raise Exception(f"Failed to fetch page {page} after {MAX_RETRIES} retries.")
+            raise Exception(f"Failed to fetch page {page} "
+                            f"after {MAX_RETRIES} retries.")
 
         data = response.json()
 
@@ -61,7 +70,8 @@ def post_animals_batch(batch: List[Dict]) -> bool:
             return True
 
         except Exception as e:
-            print(f"[Retry {attempt + 1}/{MAX_RETRIES}] Failed to post batch: {e}")
+            print(f"[Retry {attempt + 1}/{MAX_RETRIES}] "
+                  f"Failed to post batch: {e}")
             time.sleep(2)
 
     raise Exception(f"Failed to post batch after {MAX_RETRIES} attempts.")
