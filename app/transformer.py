@@ -1,3 +1,5 @@
+from datetime import datetime, timezone
+
 def transform_friends(friends):
     if not friends:
         return []
@@ -9,3 +11,11 @@ def transform_friends(friends):
             result.append(name)
 
     return result
+
+def transform_born_at(born_at):
+    if not born_at:
+        return None
+
+    seconds = born_at / 1000
+    dt = datetime.fromtimestamp(seconds, timezone.utc)
+    return dt.isoformat().replace("+00:00", "Z")
