@@ -25,4 +25,4 @@ jobs:
         run: black --check app/ tests/ main.py
 
       - name: Run tests
-        run: pytest
+        run: PYTHONPATH=. pytest
