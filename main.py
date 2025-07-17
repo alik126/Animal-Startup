@@ -1,21 +1,28 @@
-from app import client, transformer, batcher, parallel
+from app import client, transformer, parallel
 
 
 def run():
-    animals = client.fetch_animals()
-    print(f"Total animals fetched: {len(animals)}")
-    print("Transformed animals:")
-    transformed_animals = []
+    batch = []
+    page = 1
 
-    for animal in animals:
-        animal["friends"] = transformer.transform_friends(animal.get("friends"))
-        animal["born_at"] = transformer.transform_born_at(animal.get("born_at"))
-        transformed_animals.append(animal)
+    while True:
+        animals = client.fetch_animals_page(page)
+        if not animals:
+            break
 
-    batches = batcher.split_batches(transformed_animals, 100)
-    print(f"Posting {len(batches)} batches...")
+        for animal in animals:
+            animal["friends"] = transformer.transform_friends(animal.get("friends"))
+            animal["born_at"] = transformer.transform_born_at(animal.get("born_at"))
+            batch.append(animal)
 
-    parallel.post_all_batches(batches)
+            if len(batch) == 100:
+                parallel.post_all_batches([batch])
+                batch = []
+
+        page += 1
+
+    if batch:
+        parallel.post_all_batches([batch])
 
 
 if __name__ == "__main__":

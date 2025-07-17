@@ -10,51 +10,25 @@ from app.config import FETCH_ENDPOINT
 from app.config import POST_ENDPOINT
 
 
-def fetch_animals() -> List[dict]:
+def fetch_animals_page(page: int) -> List[dict]:
     """
-    Fetch all animals using pagination with retry
+    Fetch animals using pagination with retry
     (upto 5 times) on server errors.
     """
-    all_animals = []
-    page = 1
-
-    while True:
-        url = f"{BASE_URL}{FETCH_ENDPOINT}?page={page}"
-
-        for attempt in range(MAX_RETRIES):
-            try:
-                response = requests.get(url, timeout=TIMEOUT)
-                if response.status_code in {500, 502, 503, 504}:
-                    raise requests.RequestException(
-                        f"Server error {response.status_code}"
-                    )
-                break
-            except requests.RequestException as e:
-                print(
-                    f"[Retry {attempt + 1}/{MAX_RETRIES}] "
-                    f"Failed to fetch page {page}: {e}"
-                )
-                sleep(2)
-
-        else:
-            raise Exception(
-                f"Failed to fetch page {page} " f"after {MAX_RETRIES} retries."
+    url = f"{BASE_URL}{FETCH_ENDPOINT}?page={page}"
+    for attempt in range(MAX_RETRIES):
+        try:
+            response = requests.get(url, timeout=10)
+            if response.status_code in {500, 502, 503, 504}:
+                raise Exception(f"Server error {response.status_code}")
+            return response.json().get("items", [])
+        except Exception as e:
+            print(
+                f"[Retry {attempt + 1}/{MAX_RETRIES}] "
+                f"Failed to fetch page {page}: {e}"
             )
-
-        data = response.json()
-
-        items = data.get("items", [])
-        if not items:
-            break
-
-        all_animals.extend(items)
-
-        if page >= data.get("total_pages", 0):
-            break
-
-        page += 1
-
-    return all_animals
+            sleep(2)
+    raise Exception(f"Failed to fetch page {page}")
 
 
 def post_animals_batch(batch: List[Dict]) -> bool:
