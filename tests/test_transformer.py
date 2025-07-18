@@ -11,3 +11,8 @@ def test_transform_born_at():
     result = transform_born_at(716536042302)
     assert result.endswith("Z")
     assert "1992-09-15T05:47" in result
+
+
+def test_transform_friends_with_messy_string():
+    messy = "  Dog , , Cat, , ,  Fox  "
+    assert transform_friends(messy) == ["Dog", "Cat", "Fox"]
